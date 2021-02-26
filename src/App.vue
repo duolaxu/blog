@@ -18,9 +18,9 @@
       :lineOpacity="0.4"
       :linesDistance="150"
       :moveSpeed="3"
-      :hoverEffect="true"
+      :hoverEffect="false"
       hoverMode="grab"
-      :clickEffect="true"
+      :clickEffect="false"
       clickMode="push"
       >
       </vue-particles>
@@ -31,13 +31,11 @@
 
 <script>
 
-import test from "../test"
 import sidebar from "./components/update/sidebar/sidebar"
 import top from "./components/Blog/on"
 export default {
   name: 'App',
   components: {
-    test,
     sidebar,
     top
   },
@@ -59,6 +57,7 @@ export default {
     }
   },
   mounted(){
+    // console.log(JSON.parse(window.localStorage.totalArticle));
      var particle = document.getElementById("particle");
       particle.style.height=window.innerHeight+'px';
       particle.style.width=window.innerWidth+'px';
@@ -118,6 +117,11 @@ body{
   background-attachment: fixed;
   top: 0px;
   left: 0px;
+}
+#body{
+  position:relative;
+  width:100%;
+  height:100%;
 }
 #app{
   display: fixed;

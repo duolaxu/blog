@@ -79,7 +79,7 @@ const routes = [{
     }, {
         path: '/leavenote',
         component: note
-        // 通过
+            // 通过
     }, {
         path: "/preessay/:id",
         name: 'preessay',

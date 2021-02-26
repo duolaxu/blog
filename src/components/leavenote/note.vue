@@ -49,7 +49,6 @@ export default {
     },
     inject:["reload"],
     mounted(){
-        this.show=JSON.parse(window.localStorage.status);
         if(JSON.parse(window.localStorage.getItem("leavenote")))
         {
         this.article=JSON.parse(window.localStorage.getItem("leavenote"));

@@ -53,16 +53,17 @@ data() {
             var ipt=document.getElementById("ipt");
             if(this.ruleForm.password==this.ruleForm.password_1)
             {
-
+                hide.style.display="none";
             }
             else{
-                var hide=document.getElementById("hide");
+                let hide=document.getElementById("hide");
                 hide.innerText="两次输入密码不一致";
+                hide.style.display="inline";
             }
         },
       onSubmit(){
           var _this=this;
-    if(this.ruleForm.password==this.ruleForm.password_1&&this.ruleForm.password.length>=8)
+    if(this.ruleForm.password==this.ruleForm.password_1&&this.ruleForm.password.length>=8&&(this.ruleForm.name>=4&&this.ruleForm.name<=8))
     {
         this.$axios.post('/insert',this.ruleForm)
     .then(function(response) {
@@ -73,6 +74,11 @@ data() {
     .catch(function(error) {
         console.log(error);
     });
+    }else{
+      // this.judge_user=true;
+      let hide = document.getElementById("hide");
+      hide.style.display="inline";
+      hide.innerText="用户名或密码不符合规范";
     }
       }
     }
@@ -98,19 +104,25 @@ data() {
   left: 25px;
 }
 #btn input{
-  background-color: transparent;
   outline: none;
   border: 1px outset white;
-  color:white;
   width: 70px;
   height: 30px;
   border-radius: 5px;
+  background-color: rgb(221 221 221);
+}
+#btn input:hover{
+  background-color: transparent;
+  color:white;
+  border: 1px solid white;
+
 }
 #hide{
   position: relative;
   left: 100px;
-  top: -20px;
-  font-size: 14px;
+  top: -25px;
+  display: none;
+  font-size: 12px;
   color: rgb(245,108,108);
 }
 }
@@ -130,21 +142,33 @@ data() {
   margin-top: 60px;
   position: relative;
   left: 25px;
+  cursor: pointer;
 }
 #btn input{
-  background-color: transparent;
+  /* background-color: transparent; */
   outline: none;
   border: 1px outset white;
-  color:white;
+  /* color:white; */
+  border: 1.5px solid white;
   width: 70px;
   height: 30px;
   border-radius: 5px;
+  cursor: pointer;
+  background-color:rgb(221 221 221);
+}
+#btn input:hover{
+  background-color: transparent;
+  color:white;
+  border: 1px solid white;
+  /* color:red; */
+
 }
 #hide{
   position: relative;
   left: 100px;
   top: -20px;
-  font-size: 14px;
+  font-size: 12px;
+  display: none;
   color: rgb(245,108,108);
 }
 }

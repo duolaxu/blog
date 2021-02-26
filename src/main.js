@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from "./router"
 import store from "./store"
 import './plugins/element.js'
-import "../axios"
+// import "../axios"
 import animated from "animate.css"
 // import Vue from "vue"
 import mavonEditor from "mavon-editor"
@@ -18,7 +18,16 @@ import "github-markdown-css/github-markdown.css"
 import "./assets/font_icon/iconfont.css"
 import "./assets/font_icon/iconfont"
 
+import md5 from "js-md5"
+Vue.prototype.$md5=md5;
+
+// import API from "./API"
+
 // import animated from "animate.css"
+import axios from 'axios'
+Vue.prototype.$axios = axios
+axios.defaults.baseURL = '/test'
+
 
 Vue.use(vueParticles);
 
@@ -30,9 +39,8 @@ Vue.use(APlayer, {
     productionTip: true,
 });
 
-import axios from 'axios'
-Vue.prototype.$axios = axios
-axios.defaults.baseURL = '/test'
+
+// console.log("axios.defaults.baseURL = ",axios.defaults.baseURL);
     // if (process.env.NODE_ENV === "'dev'") {
     //     axios.defaults.baseURL = 'test'
     // } else {

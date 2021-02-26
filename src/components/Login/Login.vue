@@ -40,16 +40,44 @@
     mounted(){
       if(JSON.parse(window.localStorage.getItem("status")))
       {
-        this.$router.replace("/chief");
+        this.$router.replace("/main");
+      }
+
+
+      if(!JSON.parse(window.localStorage.getItem("leavenote"))){
+        this.$axios.get("/getnote")
+      .then(function(response){
+        window.localStorage.setItem("leavenote",JSON.stringify(response.data));
+      })
+      .catch((err) => {
+        console.log(err);
+      })
       }
       this.$axios.get("/login")
       .then(function(response){
-        console.log(response.data);
+        // console.log(response.data);
         window.localStorage.setItem("person",JSON.stringify(response.data));
       })
       .catch((err) => {
         console.log(err);
       })
+
+      // console.log("article = ",JSON.parse(window.sessionStorage.getItem("totalArticle")));
+      if(JSON.parse(window.sessionStorage.getItem("totalArticle"))==null){
+        let _this=this;
+          window.localStorage.setItem("delete_article",false);
+           _this.$axios.get("/essay")
+      .then(function(response){
+        window.localStorage.setItem("article_page",1);
+        window.sessionStorage.setItem("totalArticle",JSON.stringify(response.data));
+        window.localStorage.setItem("article_length",response.data.length);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+        }
+
+
     },
      data() {
       return {
@@ -111,6 +139,8 @@
         var password=this.form.password;
         var username = this.form.username;
         var password = this.form.password;
+        if(username.length==0||password.length==0)
+        return ;
         this.$axios.post('/cookie',{
           username,
           password
@@ -184,6 +214,7 @@
 <style>
 #app{
   z-index:10;
+  /* position:relative; */
 }
 *{
   padding:0px;
@@ -245,9 +276,9 @@
 }
 #form{
   position: absolute;
-  margin:auto;
+  margin: auto;
   width:100%;
-  top:35%;
+  top:200px;
 }
 #ipt,#pass{
    width:90%;
@@ -279,6 +310,20 @@
   }
 }
 @media screen and (min-width:421px) {
+  #app{
+    position:relative;
+    width:100%;
+    height:100%;
+    /* background-color: aqua; */
+    z-index:11;
+  }
+  #total{
+    position:relative;
+    width:100%;
+    height:600px; 
+    /* background-color: yellow; */
+    z-index:11;
+  }
   #box{
   position: relative;
   top: -65px;
@@ -319,10 +364,22 @@
 }
 #form{
   position: absolute;
+  bottom: 0;
+  top:0;
+  left:0;
+  right:0;
+  margin:auto;
   width:590px;
+  height:200px;
+  top:200px;
+  /* top:60%; */
+  /* margin-top:20%; */
+  /* top:35%; */
+  /* background-color: red; */
+  /* width:590px;
   left: 30%;
   margin-left: -15px;
-  top:35%;
+  top:35%; */
 }
 #ipt,#pass{
   width:85%;

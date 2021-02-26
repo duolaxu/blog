@@ -10,11 +10,6 @@
         <div class="title">
           <span @click.stop="send(index)"><strong>{{item.title}}</strong></span>
         </div>
-        <div class="tag_s">
-          <span>
-            文章标签: {{item.tags}}
-          </span>
-        </div>
         <div class="digest">
           摘要: {{item.digest}}
           <span class="total" @click.stop="send(index)">阅读全文</span>
@@ -23,17 +18,14 @@
 
         </div>
         <div class="bottom">
-          <div class="left">
-            <span class="edit_1">posted @ {{item.time}} {{Name}}</span>
-          </div>
-          <div class="right">
-            <span @click.stop="drop(index)" class="drop">删除</span>
+          <span class="edit_1">posted @ {{item.time}} {{Name}}</span>
+          <span @click.stop="drop(index)" class="drop">删除</span>
           <span to="/edit" @click.stop="change(index)" class="edit">编辑</span>
-          </div>
         </div>
         </div>
 </div> 
       </div>
+      <div id="bottom_0"></div>
   </div>
 </template>
 
@@ -47,45 +39,12 @@ export default {
   inject:["reload"],
   mounted(){
     var storage=window.sessionStorage;
-    var _this=this;
-    if(JSON.parse(window.localStorage.getItem("article")))
-    {
-       _this.article=JSON.parse(window.localStorage.getItem("article"));
-    }
-    else{
+    if(!window.sessionStorage.article){
+      var _this=this;
       this.$axios.post("/article",window.localStorage.getItem("ID"))
     .then(function(response){
-      window.localStorage.setItem("article",JSON.stringify(response.data));
-      console.log("response.data = ",response.data);
-
-      let label = new Array();
-
-      for(let i=0;i<response.data.length;i++)
-      {
-        let judge_tag=true;
-        // label.push(response.data[i].tags);
-        for(let j=0;j<label.length;j++)
-        {
-          if(label[j]==response.data[i].tags)
-          {
-            judge_tag=false;
-            break;
-          }
-        }
-        if(judge_tag==true)
-        {
-          if(response.data[i].tags!=null)
-          label.push(response.data[i].tags);
-        }
-      }
-
-      
-      // label.pop();
-
-      // console.log(label);
-
-      window.sessionStorage.setItem("article_tags",JSON.stringify(label));
-      _this.article=JSON.parse(window.localStorage.getItem("article"));
+      window.sessionStorage.setItem("article",JSON.stringify(response.data))
+      _this.article=JSON.parse(window.sessionStorage.getItem("article"));
       if(_this.article.length==0)
       {
         _this.remind=true;
@@ -97,6 +56,8 @@ export default {
     .catch(function(err){
       console.log(err);
     })
+    }else{
+      this.article=JSON.parse(window.sessionStorage.getItem("article"));
     }
   },
    data(){
@@ -108,12 +69,16 @@ export default {
     },
     methods:{
       swap(data){
+        // console.log("data = ",data);
         var time='';
         let flag=0;
         for(let i=0;i<data.length;i++)
         {
           if(data[i]==' ')
           {
+            time=time+'日';
+            break;
+          }else if(data[i]=='上'||data[i]=='下'){
             time=time+'日';
             break;
           }
@@ -132,6 +97,7 @@ export default {
           else
           time=time+data[i];
         }
+        // console.log("time = ",time);  
         return time;
       },
       change(index){
@@ -146,64 +112,56 @@ export default {
         
       },
       drop(index){
-        var _this=this;
-        let _article = JSON.parse(window.localStorage.getItem("article"));
-        //用户的所有文章信息
-        console.log(_article);
-        let index_1=_article[index].id;
-        //选择删除的文章id
-        console.log("index_1 = ",index_1);
-        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        let _this=this;
+        // console.log("article = ",JSON.parse(window.sessionStorage.getItem("article"))[index].id);
+        this.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+            // alert("index = ",index);
+
           _this.$axios.post('/delete_essay',{
-          id:JSON.parse(window.localStorage.getItem("article"))[index].id
+          id:JSON.parse(window.sessionStorage.getItem("article"))[index].id
         })
         .then(function(response) {
-          
-          console.log("_article = ",_article);
-          
-          _article.splice(index,1);
-          window.localStorage.setItem("article",JSON.stringify(_article));
-          //这里是将直接在客户端上删除，增强用户体验
-         
-          window.localStorage.setItem("delete_article",true);
-          // console.log(_this.article[index].id);
-          let total_article = JSON.parse(window.sessionStorage.getItem("totalArticle"));
-          //获取所有用户文章信息
 
-          console.log("total_article = ",total_article);
-          console.log("total_article的长度",total_article.length);
-          // console.log("index_1 = ",index_1);
-          for(let i=0;i<total_article.length;i++)
-          {
-            // console.log(total_article[i].id);
-              if(total_article[i].id==index_1)
-              {
-                console.log("i = ",i);
-                console.log("----------------");
-                console.log("total_article = ",total_article);
-                console.log("----------------");
-                total_article.splice(i,1);
-                console.log("----------------");
-                console.log("total_article = ",total_article);
-                console.log("----------------");
-                break;
-              }
-          }
-          window.sessionStorage.setItem("totalArticle",JSON.stringify(total_article));
-           _this.reload();
+
+          let article=JSON.parse(window.sessionStorage.article);
+
+      let index_id=JSON.parse(window.sessionStorage.getItem("article"))[index].id;
+
+      article.splice(index,1);
+
+      window.sessionStorage.setItem("article",JSON.stringify(article));
+
+      let total_article=JSON.parse(window.sessionStorage.totalArticle);
+
+      let index_article;
+
+      for(let i=0;i<total_article.length;i++){
+        if(total_article[i].id==index_id){
+          index_article=i;
+          break;
+        }
+      }
+      total_article.splice(index_article,1);
+      // total_article.pop();
+
+      window.sessionStorage.setItem("totalArticle",JSON.stringify(total_article));
+
+      _this.reload();
         })
         .catch((err) => {
           console.log(err);
          })
+         _this.reload();
           this.$message({
             type: 'success',
             message: '删除成功!'
           });
         }).catch(() => {
+          // alert("已取消删除");
           this.$message({
             type: 'info',
             message: '已取消删除'
@@ -212,7 +170,6 @@ export default {
       },
       send(index){
         window.localStorage.setItem("article_id",index);
-        window.localStorage.setItem("Check_id",this.article[index].id);
         this.$router.push({
           name:'content',
           params:{
@@ -226,6 +183,10 @@ export default {
 </script>
 <style scoped>
 @media screen and (max-width:420px) {
+  #bottom_0{
+    width:1px;
+    height:30px;
+  }
 .main{
   width:90%;
   background-color: white;
@@ -238,18 +199,28 @@ export default {
 .drop{
   cursor: pointer;
   color:rgb(160,158,163);
-  position: relative;
-  top:-5px;
-  left:100%;
+  /* position: relative; */
+  /* top:-5px; */
+  /* left:100%; */
+  /* left: */
+  /* left:100px; */
+  /* top:-6px; */
+  /* margin-left:100%; */
+  width:30px;
+  position: absolute;
+  left: 80%;
+  /* top:-5px; */
+  bottom:15px;
   display: inline-block;
   font-size:12px;
 }
 .drop:hover{
   color:red;
-} 
+}
 .time{
   width:130px;
   margin:auto;
+  
 }
 .title{
   width:98%;
@@ -261,11 +232,6 @@ export default {
 }
 .title span:hover{
   color:red;
-}
-.tag_s{
-  color:rgb(160,158,163);
-  font-size: 18px;
-  margin-left: 30px;
 }
 .digest{
   margin-top:10px;
@@ -305,10 +271,10 @@ a{
   color:rgb(144 147 153);
   text-decoration: none;
   cursor: pointer;
-  margin-left: 67%;
+  margin-left: 75%;
   position:relative;
   font-size:12px;
-  top:-5px;
+  top:-6px;
 }
 .edit:hover{
   color:red;
@@ -334,6 +300,10 @@ a{
 }
 }
 @media screen and (min-width:421px) {
+  #bottom_0{
+    width:1px;
+    height:30px;
+  }
   #name{
   font-size: 35px;
   height:100px;
@@ -357,9 +327,9 @@ a{
   cursor: pointer;
   color:rgb(160,158,163);
   position: relative;
-  top:13px;
-  left:-10px;
-  /* display: inline-block; */
+  top:15px;
+  left:10px;
+  display: inline-block;
   font-size:14px;
 }
 .drop:hover{
@@ -371,9 +341,8 @@ a{
   
 }
 .title{
-  width:48.5%;
+  width:200px;
   margin-left:30px;
-  display: inline-block;
 }
 .title span{
   cursor: pointer;
@@ -381,13 +350,6 @@ a{
 }
 .title span:hover{
   color:red;
-}
-.tag_s{
-  display: inline-block;
-  width: 39%;
-  height: 20px;
-  color:rgb(160,158,163);
-  font-size: 15px;
 }
 .digest{
   margin-top:10px;
@@ -422,34 +384,24 @@ a{
 a{
   pointer-events: none;
 }
-.right{
-  display: inline-block;
-  position: relative;
-  top:1px;
-  width:11%;
-  text-align: center;
-}
-.left{
-  width:49%;
-  display: inline-block;
-  position: relative;
-  margin-left: 23.5%;
-  text-align: right;
-}
 .edit{
+  display: inline-block;
   color:rgb(144 147 153);
   text-decoration: none;
   cursor: pointer;
+  margin-left: 775px;
   position:relative;
-  font-size:13px;
-  top:13px;
+  font-size:14px;
+  top:-6px;
 }
 .edit:hover{
   color:red;
 }
 .edit_1{
   font-size:14px;
+  display: inline-block;
   color:rgb(144 147 153);
+  margin-left: 425px;
   position:relative;
   top:15px;
 }
@@ -465,4 +417,4 @@ a{
   height:50px;
 }
 }
-</style>
+</stylescs>

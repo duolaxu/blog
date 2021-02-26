@@ -13,9 +13,9 @@
           <div id="other">
               <div id="time_2">{{swap_time()}}</div>
               <div id="count_2">字符统计: {{count}}字</div> 
-              <div id="tag_2">
+              <!-- <div id="tag_2">
                   文章标签: {{tag}}
-              </div>
+              </div> -->
           </div>
           <div id="digest">
 
@@ -37,6 +37,7 @@
       <div id="onsub">
           <onsub class="onsub"></onsub>
       </div>
+      <div id="bottom_0"></div>
   </div>
 </template>
 
@@ -105,9 +106,11 @@ export default {
     },
     inject:["reload"],
     mounted(){
+        // console.log("timer_2");
         this.show=JSON.parse(window.localStorage.getItem("status"));
         var index=window.localStorage.getItem("ArticleId");
-        this.name=JSON.parse(window.localStorage.getItem("person"))[index].name;
+        let userId=JSON.parse(window.sessionStorage.getItem("totalArticle"))[index].user_id;
+        this.name=JSON.parse(window.localStorage.person)[userId-1].name;
         this.time=JSON.parse(window.sessionStorage.getItem("totalArticle"))[index].time;
         var _this=this;
         this.$axios.post("/getcomment",{
@@ -128,12 +131,17 @@ export default {
         content.innerHTML=reault;
         title.innerHTML="<h1>"+JSON.parse(window.sessionStorage.getItem("totalArticle"))[index].title+"</h1>";
         digest.innerText="摘要: "+JSON.parse(window.sessionStorage.getItem("totalArticle"))[index].digest;
+        // console.log("timer_3");
     }
 }
 
 </script>
 <style scoped>
 @media screen and (max-width:420px) {
+    #bottom_0{
+        width:1px;
+        height:20px;
+    }
     #name{
     width:50%;
     margin:auto;
@@ -225,6 +233,10 @@ export default {
 }
 }
 @media screen and (min-width:421px) {
+    #bottom_0{
+        width:1px;
+        height:20px;
+    }
     #name{
     width:300px;
     margin:auto;

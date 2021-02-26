@@ -21,60 +21,7 @@
   </el-timeline>
 </div>
       </div>
-    <div id="right">
-        <div id="right_tag">
-          <div id="tag">
-            <div id="tag_txt">
-              <!-- Tags -->
-              文章标签: 
-            </div>
-          </div>
-          </div>
-        <div id="right_cnt">
-          <div class="tier" :key="index" v-for="(item,index) in article_tag">
-          <div class="tier_div">
-            <span class="tier_txt">
-              {{item}}
-            </span>
-          </div>
-        </div>
-        <!-- <div class="tier">
-          <div class="tier_div">
-            <span class="tier_txt">
-              CSS
-            </span>
-          </div>
-        </div>
-        <div class="tier">
-          <div class="tier_div">
-            <span class="tier_txt">
-              JavaScript
-            </span>
-          </div>
-        </div>
-        <div class="tier">
-          <div class="tier_div">
-            <span class="tier_txt">
-              Vue
-            </span>
-          </div>
-        </div>
-        <div class="tier">
-          <div class="tier_div">
-             <span class="tier_txt">
-              node
-            </span>
-          </div>
-        </div>
-        <div class="tier">
-          <div class="tier_div">
-            <span class="tier_txt">
-              mysql
-            </span>
-          </div>
-        </div> -->
-        </div>
-      </div>
+
   </div>
 </template>
 
@@ -84,26 +31,26 @@ export default {
 
     },
     mounted() {
-        this.article_tag=JSON.parse(window.sessionStorage.getItem("article_tags"));
-        console.log(typeof(this.article_tag));
         this.name=window.localStorage.Name;
         var arr = new Array();
-        let lent = JSON.parse(window.localStorage.article).length;
+        if(window.sessionStorage.article.length!=0)
+        {
+            let lent = JSON.parse(window.sessionStorage.article).length;
         
         for(let i=0;i<lent;i++)
         {
             let com = {
-                content:JSON.parse(window.localStorage.article)[i].title,
-                timestamp:JSON.parse(window.localStorage.article)[i].time
+                content:JSON.parse(window.sessionStorage.article)[i].title,
+                timestamp:JSON.parse(window.sessionStorage.article)[i].time
             }
             this.activities.push(com);
+        }
         }
     },
       data() {
       return {
         activities: [],
-        name:'',
-        article_tag:''
+        name:''
       };
     },
     methods:{
@@ -158,20 +105,13 @@ export default {
     top: -50px;
     color:white;
 }
-#total{
-    display: inline-block;
-    width:80%;
-    margin:auto;
-    height: auto;
-    /* background-color: red; */
-}
 .eltime{
     width: 200px;
     height:50px;
 }
 .block{
     margin:auto;
-    width:30%;
+    width:38%;
     margin-top: 100px;
 }
 .sp{
@@ -181,66 +121,6 @@ export default {
 }
 .sp:hover{
     color:red;
-}
-
-#right{
-  width: 119px;
-  height:auto;
-  float: right;
-  position: relative;
-  right: 25%;
-  margin-top: 80px;
-}
-#right_tag{
-  height: 60px;
-  width:100%;
-  position: relative;
-  right:15px;
-}
-#tag{
-  width:100%;
-  height:90%;
-  border-radius: 3px;
-  text-align: center;
-  font-size: 18px;
-  background-color: white;
-  margin:auto;
-}
-#tag_txt{
-  position: relative;
-  top:14px;
-}
-#right_cnt{
-  position: relative;
-  right:15px;
-  background-color: white;
-  border-radius: 3px;
-}
-.tier{
-  height: 60px;
-  text-align: center;
-}
-.tier_div{
-  height:80%;
-  margin-top: 5px;
-  display:inline-block;
-  width:90%;
-  cursor: pointer;
-  transition: 0.3s;
-  box-shadow: 2px 2px 2px rgb(160,158,163);
-  font-size:13px;
-}
-.tier_div:hover{
-  width: 95%;
-  height:85%;
-  font-size:16px;
-  box-shadow: 2px 3px 4px rgb(160,158,163);
-  color: rgb(51 51 51);
-  transition: 0.4s;
-}
-.tier_txt{
-  display: inline-block;
-  margin-top: 15px;
 }
 }
 </style>

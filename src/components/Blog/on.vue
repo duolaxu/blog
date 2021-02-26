@@ -6,7 +6,7 @@
           <div class="flex" id="flex_3">
               <span class="sp" v-if="!log"  @click="login">登录</span>
           </div>
-          <div class="flex" id="flex_4" @click="regist"><span class="sp">个人中心</span></div>
+          <div class="flex" id="flex_4" @click="regist"><span class="sp">注册</span></div>
       </div>
   </div>
 </template>

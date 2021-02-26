@@ -1,5 +1,6 @@
 <template>
   <div class="app">
+          <div id="top_0"></div>
       <div id="total">
           <div id="main">
           <div id="title">
@@ -7,9 +8,9 @@
           <div id="other">
               <div id="time_2">{{swap_time()}}</div>
               <div id="count_2">字符统计: {{count}}字</div>
-              <div id="tag_2">
+              <!-- <div id="tag_2">
                   文章标签: {{tag}}
-              </div>
+              </div> -->
           </div>
           <div id="digest">
 
@@ -31,6 +32,7 @@
       <div id="onsub">
           <onsub class="onsub"></onsub>
       </div>
+      <div id="bottom_0"></div>
   </div>
 </template>
 
@@ -47,7 +49,7 @@ export default {
     methods:{
         swap_time(){
             var index=window.localStorage.getItem("article_id");
-            var data = JSON.parse(window.localStorage.getItem("article"))[index].time;
+            var data = JSON.parse(window.sessionStorage.getItem("article"))[index].time;
             var time='';
         let flag=0;
         for(let i=0;i<data.length;i++)
@@ -100,10 +102,10 @@ export default {
     mounted(){
         var index=window.localStorage.getItem("article_id");
         var _this=this;
-        this.time = JSON.parse(window.localStorage.getItem("article"))[index].time;
+        this.time = JSON.parse(window.sessionStorage.getItem("article"))[index].time;
         this.name = window.localStorage.Name;
         this.$axios.post("/getcomment",{
-          id:JSON.parse(window.localStorage.getItem("article"))[index].id
+          id:JSON.parse(window.sessionStorage.getItem("article"))[index].id
         })
         .then(function(response){
           _this.$store.commit("setComment",response.data);
@@ -113,18 +115,23 @@ export default {
         var digest=document.getElementById("digest");
         var markDownIt=require("markdown-it");
         var md=new markDownIt();
-        var reault = md.render(JSON.parse(window.localStorage.getItem("article"))[index].content);
-        this.tag = JSON.parse(window.localStorage.getItem("article"))[index].tags;
+        // console.log("index = ",index);
+        var reault = md.render(JSON.parse(window.sessionStorage.getItem("article"))[index].content);
+        this.tag = JSON.parse(window.sessionStorage.getItem("article"))[index].tags;
         content.innerHTML=reault;
         this.count=this.wordCount(reault);
-        title.innerHTML="<h1>"+JSON.parse(window.localStorage.getItem("article"))[index].title+"</h1>";
-        digest.innerText="摘要: "+JSON.parse(window.localStorage.getItem("article"))[index].digest;
+        title.innerHTML="<h1>"+JSON.parse(window.sessionStorage.getItem("article"))[index].title+"</h1>";
+        digest.innerText="摘要: "+JSON.parse(window.sessionStorage.getItem("article"))[index].digest;
     }
 }
 
 </script>
 <style scoped>
 @media screen and (max-width:420px) {
+    #bottom_0{
+        width:1px;
+        height:20px;
+    }
     #name{
     width: 130px;
     height:75px;
@@ -221,6 +228,14 @@ export default {
 }
 }
 @media screen and (min-width:421px) {
+    #bottom_0{
+        width:1px;
+        height:20px;
+    }
+    #top_0{
+        width:1px;
+        height:30px;
+    }
     #name{
     width: 130px;
     height:80px;

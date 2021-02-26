@@ -7,11 +7,6 @@
 <div id="form">
 
   <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="demo-ruleForm">
-  <div id="tags">
-    <el-form-item label="标签" @input="monitor_ipt" id="ipt_1" prop="tags">
-    <el-input v-model="form.tags" placeholder="文章标签"></el-input>
-  </el-form-item>
-</div>
   <div id="top">
     <div id="ipt">
     <el-form-item label="标题" prop="title">
@@ -48,6 +43,7 @@
   </div>
 </template>
 <script>
+import {mavonEditor} from "mavon-editor"
 export default {
   name:'Edit',
   components:{
@@ -60,9 +56,9 @@ export default {
             digest:'',
             doc:'',
             time:'',
-            tags:'',
             id:window.localStorage.getItem("ID"),
-            article:window.localStorage.getItem("article_id")
+            article:window.localStorage.getItem("article_id"),
+            name:window.localStorage.Name
           },
       rules: {
           title: [
@@ -70,42 +66,42 @@ export default {
           ],
           digest:[
             { required: true, message: '请写下你的摘要', trigger: 'blur' }
-          ],
-          tags: [
-            { required: true, message: '请写下你的文章标签', trigger: 'blur' }
           ]
         }
     }
   },
   mounted(){
-    let index=window.localStorage.getItem("article_id");
-    this.form.title=JSON.parse(window.localStorage.getItem("article"))[index].title;
-    this.form.digest=JSON.parse(window.localStorage.getItem("article"))[index].digest;
-    this.form.doc=JSON.parse(window.localStorage.getItem("article"))[index].content;
-    this.form.id=JSON.parse(window.localStorage.getItem("article"))[index].id;
-    this.form.tags=JSON.parse(window.localStorage.getItem("article"))[index].tags;
+    var index=window.localStorage.getItem("article_id");
+    this.form.title=JSON.parse(window.sessionStorage.getItem("article"))[index].title;
+    this.form.digest=JSON.parse(window.sessionStorage.getItem("article"))[index].digest;
+    this.form.doc=JSON.parse(window.sessionStorage.getItem("article"))[index].content;
+    this.form.id=JSON.parse(window.sessionStorage.getItem("article"))[index].id;
   },
   methods:{
         $imgAdd(pos, file){
+
+            let formData = new window.FormData(); 
             let _this=this;
-           var formdata = new FormData();
-           formdata.append('imgFile', file);
-           this.$axios.post("/upload",formdata)
+            formData.append("file", file);
+            //  formdata.append('imgFile', file);
+           this.$axios.post("/upload",formData)
            .then((response) => {
+            _this.$refs.md.$img2Url(pos,response.data.url);
+
+            // console.log("_this.$ref.md = ",_this.$refs.md);
 
            })
+            
         },
         $imgDel(pos,$file){
 
-        },
-        monitor_ipt(){
-          var ipt_1=document.getElementById("ipt_1");
         },
       onSubmit() {
         window.localStorage.setItem("main",false);
         var myDate=new Date();
         this.form.time=myDate.toLocaleString();
-        let _this=this;
+        // console.log("TIME = ",this.form.time);
+        var _this=this;
 
         let send=0;
 
@@ -129,19 +125,54 @@ export default {
         {
           this.$axios.post('/update_essay',this.form)
     .then(function(response) {
-      let index=window.localStorage.getItem("article_id");
-      let Article=JSON.parse(window.localStorage.getItem("article"));
-     console.log(Article[index]);
-     let _form={
-       content:_this.form.doc,
-       digest:_this.form.digest,
-       title:_this.form.title,
-       time:_this.form.time,
-       tags:_this.form.tags,
-       id:_this.form.id
-     }
-     Article[index]=_form;
-     window.localStorage.setItem("article",JSON.stringify(Article));
+      // let 
+
+
+      // alert("00000");
+      // console.log("JSON.parse(window.localStorage.article)[_this.form.article].id = ",JSON.parse(window.sessionStorage.article)[_this.form.article].id);
+
+      let index_0=JSON.parse(window.sessionStorage.article)[_this.form.article].id;
+
+      console.log("_this.form.date = ",_this.form.time);
+
+      let form_1={
+        id:index_0,
+        title:_this.form.title,
+        digest:_this.form.digest,
+        content:_this.form.doc,
+        tags:null,
+        time:_this.form.time,
+        user_id:window.localStorage.ID,
+        name:_this.form.name
+      }
+
+      let article=JSON.parse(window.sessionStorage.article);
+
+      article.splice(_this.form.article,1);
+      article.push(form_1);
+
+      window.sessionStorage.setItem("article",JSON.stringify(article));
+
+      let total_article=JSON.parse(window.sessionStorage.totalArticle);
+
+      for(let i=0;i<total_article.length;i++){
+        if(total_article[i].id==index_0){
+          index_0=i;
+          break;
+        }
+      }
+
+      total_article.splice(index_0,1);
+
+      total_article.push(form_1);
+
+      window.sessionStorage.setItem("totalArticle",JSON.stringify(total_article));
+
+
+
+
+
+
       _this.$router.push("/main")
     })
     .catch(function(error) {
@@ -173,16 +204,6 @@ export default {
 </script>
 <style scoped>
 @media screen and (max-width:420px) {
-    #tags{
-    width:90%;
-    position: relative;
-    left: -5%;
-    text-align: center;
-  }
-  #mavon{
-    width:100%;
-    height:100%;
-  }
   #create{
   font-size: 30px;
   height:100px;
@@ -190,7 +211,7 @@ export default {
   margin:auto;
   position: relative;
   top:50px;
-  left:50px;
+  left:70px;
 }
 #app{
   z-index:10;
@@ -206,11 +227,13 @@ export default {
 }
 #editor{
   margin:auto;
-  width:95%;
-  height:400px;
+  width:90%;
   position: relative;
 }
 #btn{
+  width: 100%;
+}
+.btn_submit{
   width:270px;
   margin:auto;
   text-align: center;
@@ -220,17 +243,14 @@ export default {
 }
 #form{
   width:100%;
-  height:80%;
-  margin: auto;
-  opacity: 0.9; 
+  height:100%;
 }
 #top{
   width:100%;
 }
 #ipt,#pass{
   width:90%;
-   height:60px;
-   margin-left:-20px;
+  height:60px;
 }
  .el-row {
     margin-bottom: 20px;
@@ -258,35 +278,13 @@ export default {
   }
 }
 @media screen and (min-width:421px) {
-  #tags{
-    width: 340px;
-    height: 100px;
-    position: absolute;
-    left: 61%;
-    text-align: center;
-  }
-  #tags_txt{
-    color:white;
-    font-size: 20px;
-  }
-  #ipt_1{
-    width: 100%;
-    height: 40px;
-    /* background-color: red; */
-  }
-  #ipt_1 input{
-    outline: none;
-    border: 0px solid white;
-    width: 100%;
-    height: 100%;
-  }
   #create{
   font-size: 30px;
-  height:100px;
+  height:80px;
   width:200px;
   margin:auto;
   position: relative;
-  top:30px;
+  top:20px;
   left:70px;
 }
 #app{
@@ -307,24 +305,22 @@ export default {
   position: relative;
 }
 #btn{
+  width: 100%;
+}
+.btn_submit{
   width:270px;
-  /* margin:auto; */
+  margin:auto;
   text-align: center;
   position:relative;
-  /* left:25px; */
-  left: 33%;
+  left:-50px;
   top:15px;
 }
 #form{
-  width:50%;
-  height:50%;
-  margin: auto;
-  opacity: 0.9; 
+  width:100%;
+  height:100%;
 }
 #top{
   width:100%;
-  position: relative;
-  left: -14%;
 }
 #ipt,#pass{
   width:500px;

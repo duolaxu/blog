@@ -267,24 +267,32 @@ export default {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(() => {
-             window.localStorage.removeItem("article"),
+        })
+        .then(() => {
+            // alert("fverg");
+            // window.sessionStorage.removeItem("article");
+           window.localStorage.removeItem("article"),
             window.localStorage.removeItem("ID"),
             window.localStorage.removeItem("article_id");
             window.localStorage.removeItem("preID");
-
+            // alert("success");
+            window.sessionStorage.removeItem("article");
+            
             window.localStorage.setItem("Name","Doraemon");
             window.localStorage.setItem("main",false);
             window.localStorage.setItem("status",false);
-            _this.$store.commit("setLog",JSON.parse(window.localStorage.getItem("status")));
+             _this.$store.commit("setLog",JSON.parse(window.localStorage.getItem("status")));
             if(window.location.pathname=='/chief')
             {
+            // alert("2144");
                 
             }
             else{
+            
                 _this.$router.replace("/chief");
             }
-        }).catch(() => {        
+        }).catch(() => {    
+            // alert("fvrtgh");    
         });
         },
         slow(){
