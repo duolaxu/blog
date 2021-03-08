@@ -121,19 +121,13 @@ export default {
             break;
                 }
             }
+            console.log("send = ",send);
             if(send==2)
         {
           this.$axios.post('/update_essay',this.form)
     .then(function(response) {
-      // let 
-
-
-      // alert("00000");
-      // console.log("JSON.parse(window.localStorage.article)[_this.form.article].id = ",JSON.parse(window.sessionStorage.article)[_this.form.article].id);
 
       let index_0=JSON.parse(window.sessionStorage.article)[_this.form.article].id;
-
-      console.log("_this.form.date = ",_this.form.time);
 
       let form_1={
         id:index_0,

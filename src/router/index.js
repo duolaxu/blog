@@ -20,7 +20,13 @@ import viewArticle from "../components/preview/preArticle.vue"
 import main from "../components/update/mainpage/main.vue"
 import line from "../components/update/time/timeline.vue"
 
-const routes = [{
+const routes = [
+    {
+        redirect: '/',
+        path:"*"
+        // component: login
+            // 通过
+    },{
         path: '/',
         component: login
             // 通过

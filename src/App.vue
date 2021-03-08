@@ -63,12 +63,34 @@ export default {
       particle.style.width=window.innerWidth+'px';
 
       let _this = this;
-        window.onresize = () =>{
-            return(() => {
+        // window.onresize = () =>{
+        //     return(() => {
+        //         window.screenWidth = document.body.clientWidth;
+        //         _this.$store.state.wide = window.screenWidth;
+        //     })()
+        // }
+
+
+      function timeout(fn, time) {
+                let setTime = null;
+                return function() {
+                    if (setTime) {
+                        clearTimeout(setTime);
+                    }
+                    setTime = setTimeout(fn, time);
+                }
+            }
+
+            function action() {
+              // console.log("防抖节流");
                 window.screenWidth = document.body.clientWidth;
                 _this.$store.state.wide = window.screenWidth;
-            })()
-        }
+            }
+            window.addEventListener("resize", timeout(action, 500));
+
+
+
+
   },
   provide(){
     return{

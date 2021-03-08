@@ -63,11 +63,17 @@ data() {
         },
       onSubmit(){
           var _this=this;
-    if(this.ruleForm.password==this.ruleForm.password_1&&this.ruleForm.password.length>=8&&(this.ruleForm.name>=4&&this.ruleForm.name<=8))
+    if(this.ruleForm.password==this.ruleForm.password_1&&this.ruleForm.password.length>=8&&(this.ruleForm.name.length>=4&&this.ruleForm.name.length<=8))
     {
         this.$axios.post('/insert',this.ruleForm)
     .then(function(response) {
      setTimeout(function(){
+       window.localStorage.setItem("url_head","http://49.235.198.134:9090/picture/regist.png");
+        _this.$axios.post("/regis_head",{
+          name:_this.ruleForm.name
+        })
+        .then()
+        .catch((err) => {})
          _this.$router.push('/login');
      },500);
     })

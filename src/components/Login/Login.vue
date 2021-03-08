@@ -55,14 +55,12 @@
       }
       this.$axios.get("/login")
       .then(function(response){
-        // console.log(response.data);
         window.localStorage.setItem("person",JSON.stringify(response.data));
       })
       .catch((err) => {
         console.log(err);
       })
 
-      // console.log("article = ",JSON.parse(window.sessionStorage.getItem("totalArticle")));
       if(JSON.parse(window.sessionStorage.getItem("totalArticle"))==null){
         let _this=this;
           window.localStorage.setItem("delete_article",false);
@@ -158,6 +156,7 @@
           _this.$store.commit("setLog",JSON.parse(window.localStorage.getItem("status")));
           window.localStorage.setItem("ID",response.data[0].id);
           window.localStorage.setItem("Name",_this.form.username);
+          if(!window.localStorage.getItem("url_head"))
           window.localStorage.setItem("url_head",response.data[0].url);
           _this.$router.push("/main");
         window.sessionStorage.setItem("name",_this.form.username);
@@ -166,7 +165,6 @@
           var storage=window.localStorage;
           if(!storage.lent)
           {
-            alert("freg");
             storage.setItem("lent",1);
             storage.setItem("form_"+storage.lent,JSON.stringify(_this.form));
           }
